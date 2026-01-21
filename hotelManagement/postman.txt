@@ -1,0 +1,167 @@
+Postman Testing Guide for Hotel Management System
+This guide covers the testing of all 23 User Stories using the implemented REST API.
+
+Base URL: http://localhost:8084
+
+Prerequisites
+Start the Application: Run ./mvnw spring-boot:run.
+Postman: Open Postman.
+Part 1: Authentication & Setup (Stories 1-2)
+1. Register Admin
+Method: POST
+URL: {{BaseURL}}/api/auth/register
+Body (JSON):
+{
+    "username": "admin",
+    "email": "admin@hotel.com",
+    "password": "password123",
+    "role": ["admin"],
+    "mobile": "9999999999",
+    "address": "Admin HQ"
+}
+2. Login as Admin
+Method: POST
+URL: {{BaseURL}}/api/auth/login
+Body (JSON):
+{
+    "username": "admin",
+    "password": "password123"
+}
+Action: Copy the accessToken from the response. Use this for all Admin requests.
+Part 2: Admin Operations - Room Management (Stories 3-6)
+Auth: Bearer Token (Admin)
+
+3. Add a Room
+Method: POST
+URL: {{BaseURL}}/api/admin/rooms
+Body (JSON):
+{
+    "roomNumber": "101",
+    "type": "Deluxe",
+    "price": 150.00,
+    "amenities": "WiFi, AC, TV",
+    "maxOccupancy": 2,
+    "description": "Luxury room with city view",
+    "available": true
+}
+4. Update Room
+Method: PUT
+URL: {{BaseURL}}/api/admin/rooms/{id} (e.g., 1)
+Body (JSON):
+{
+    "type": "Deluxe",
+    "price": 180.00,
+    "amenities": "WiFi, AC, TV, Breakfast",
+    "maxOccupancy": 2,
+    "description": "Updated Description",
+    "available": true
+}
+5. Get All Rooms
+Method: GET
+URL: {{BaseURL}}/api/admin/rooms
+6. Delete Room
+Method: DELETE
+URL: {{BaseURL}}/api/admin/rooms/{id}
+Part 3: Customer Operations - Booking & Profile (Stories 7-15)
+7. Register Customer
+Method: POST
+URL: {{BaseURL}}/api/auth/register
+Body (JSON):
+{
+    "username": "john",
+    "email": "john@example.com",
+    "password": "password123",
+    "role": ["customer"],
+    "mobile": "1231231234",
+    "address": "123 Main St"
+}
+8. Login as Customer
+Method: POST
+URL: {{BaseURL}}/api/auth/login
+Body (JSON):
+{
+    "username": "john",
+    "password": "password123"
+}
+Action: Copy accessToken. Use for Customer requests.
+9. View My Profile
+Method: GET
+URL: {{BaseURL}}/api/customer/details
+10. Update Profile
+Method: PUT
+URL: {{BaseURL}}/api/customer/update-profile
+Body (JSON):
+{
+    "username": "john",
+    "email": "john.new@example.com",
+    "mobile": "9876543210",
+    "address": "New Address"
+}
+11. Search Available Rooms
+Method: GET
+URL: {{BaseURL}}/api/customer/rooms/search?checkIn=2024-12-01&checkOut=2024-12-05
+12. Book a Room
+Method: POST
+URL: {{BaseURL}}/api/customer/book
+Body (JSON):
+{
+    "room": { "id": 1 },
+    "checkInDate": "2024-12-01",
+    "checkOutDate": "2024-12-05",
+    "numAdults": 2,
+    "numChildren": 0
+}
+13. Get My Bookings
+Method: GET
+URL: {{BaseURL}}/api/customer/bookings
+14. Cancel Booking
+Method: PUT
+URL: {{BaseURL}}/api/customer/bookings/{id}/cancel (Use Booking ID from Step 13)
+15. Create Complaint
+Method: POST
+URL: {{BaseURL}}/api/customer/complaints
+Body (JSON):
+{
+    "title": "AC not working",
+    "description": "The AC in room 1 is broken",
+    "category": "Maintenance"
+}
+16. Get My Bills
+Method: GET
+URL: {{BaseURL}}/api/customer/bills
+Part 4: Admin & Staff Operations - Management (Stories 16-23)
+17. View All Users (Admin)
+Method: GET
+URL: {{BaseURL}}/api/admin/users
+Auth: Admin Token
+18. View All Bookings (Admin)
+Method: GET
+URL: {{BaseURL}}/api/admin/bookings
+Auth: Admin Token
+19. Update Booking Status (Admin)
+Method: PUT
+URL: {{BaseURL}}/api/admin/bookings/{id}/status?status=CHECKED_IN
+Auth: Admin Token
+20. Generate/Add Bill (Admin)
+Method: POST
+URL: {{BaseURL}}/api/admin/bills
+Body (JSON):
+{
+    "booking": { "id": 1 },
+    "totalAmount": 500.00,
+    "details": "Room Charge + Service Fee",
+    "paymentStatus": "PENDING"
+}
+Auth: Admin Token
+21. Staff Login
+First Register a Staff user using the Register endpoint (Role: "staff").
+Login to get Staff Token.
+22. View Complaints (Staff)
+Method: GET
+URL: {{BaseURL}}/api/staff/complaints
+Auth: Staff Token
+23. Resolve Complaint (Admin)
+Method: PUT
+URL: {{BaseURL}}/api/admin/complaints/{id}/resolve
+Body (String): "Technician fixed the AC."
+Auth: Admin Token
